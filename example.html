@@ -7,22 +7,25 @@
     <title>Ably Pub Sub</title>
   </head>
   <body></body>
-  <script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+  <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
 
   <script>
     const apiKey = "YOUR_ABLY_API_KEY";
-    const realtime = new Ably.Realtime(apiKey);
-    let channel = null;
-    realtime.connection.on("connected", () => {
-      console.log("Connected to Ably!");
-      
-      channel = realtime.channels.get("sport");
+    const realtime = new Ably.Realtime.Promise(apiKey);
 
-      channel.subscribe((msg) => {
+    async function doPubSub() {
+      await realtime.connection.once("connected");
+      console.log("Connected to Ably!");
+
+      const channel = realtime.channels.get("sport");
+
+      await channel.subscribe((msg) => {
         console.log("Received: " + JSON.stringify(msg.data));
       });
-      
-      channel.publish("update", { team: "Man United" });
-    });
+
+      await channel.publish("update", { team: "Man United" });
+    }
+
+    doPubSub();
   </script>
 </html>
