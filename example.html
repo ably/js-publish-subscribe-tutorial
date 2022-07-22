@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ably Pub Sub</title>
+  </head>
+  <body></body>
+  <script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+
+  <script>
+    const apiKey = "YOUR_ABLY_API_KEY";
+    const realtime = new Ably.Realtime(apiKey);
+    let channel = null;
+    realtime.connection.on("connected", () => {
+      console.log("Connected to Ably!");
+      
+      channel = realtime.channels.get("sport");
+
+      channel.subscribe((msg) => {
+        console.log("Received: " + JSON.stringify(msg.data));
+      });
+      
+      channel.publish("update", { team: "Man United" });
+    });
+  </script>
+</html>
